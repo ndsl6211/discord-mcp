@@ -1,0 +1,19 @@
+[project]
+name = "discord-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "discord-py>=2.5.2",
+    "langfuse>=2.60.4",
+    "nest-asyncio>=1.6.0",
+    "openai-agents>=0.0.14",
+    "py-cord>=2.6.1",
+    "pydantic-ai[logfire]>=0.1.11",
+    "pyright[nodejs]>=1.1.400",
+    "python-dotenv>=1.1.0",
+    "pyyaml>=6.0.2",
+    "redis>=6.0.0",
+    "ruff>=0.11.8",
+]
