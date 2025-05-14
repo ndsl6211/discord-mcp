@@ -1,7 +1,8 @@
 import json
-from typing import Any, Dict, List, Literal
-import yaml
 from dataclasses import dataclass
+from typing import Any, Dict, List, Literal
+
+import yaml
 
 
 @dataclass

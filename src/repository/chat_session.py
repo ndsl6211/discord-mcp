@@ -1,6 +1,6 @@
-from abc import ABC
-from dataclasses import asdict, dataclass
 import json
+from abc import ABC, abstractmethod
+from dataclasses import asdict, dataclass
 from typing import Any, Dict, List, Literal
 
 from openai.types.responses import EasyInputMessageParam
@@ -33,25 +33,29 @@ class ChatSession:
             EasyInputMessageParam(
                 content=record.message,
                 role=record.role,
-                type="message"
+                type="message",
             )
             for record in self.history
         ]
 
 
 class ChatSessionStorage(ABC):
+    @abstractmethod
     def create_session(self, session_id: int, system_prompt: str | None) -> ChatSession:
         raise NotImplementedError
 
+    @abstractmethod
     def add_message(
         self,
         session_id: int,
         record: Record,
-    ) -> None:
+    ) -> ChatSession:
         raise NotImplementedError
 
+    @abstractmethod
     def get_session(self, session_id: int) -> ChatSession | None:
         raise NotImplementedError
 
+    @abstractmethod
     def get_all_sessions(self) -> Dict[int, ChatSession]:
         raise NotImplementedError
