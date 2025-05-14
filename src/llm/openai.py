@@ -1,13 +1,18 @@
-import os
 import base64
+import os
+
 import logfire
 import nest_asyncio
-from agents import Agent, set_default_openai_key
-from src.config.config import Config
-from src.llm.mcp_server import MCPServerManager
+from agents import Agent, Runner, set_default_openai_key
+from openai.types.responses import EasyInputMessageParam
+
+from ..config.config import Config
+from ..llm.llm import LLMInteractor
+from ..llm.mcp_server import MCPServerManager
+from ..repository.chat_session import ChatSession
 
 
-class OpenAiAgent:
+class OpenAiAgent(LLMInteractor):
     def __init__(self, config: Config, mcp_server_manager: MCPServerManager) -> None:
         self._config = config
         self._mcp_server_manager = mcp_server_manager
@@ -47,5 +52,20 @@ class OpenAiAgent:
             mcp_servers=[s for s in self._mcp_server_manager.get()],
         )
 
-    def get_agent(self):
-        return self._agent
+    async def send_message(self, chat_session: ChatSession) -> str:
+        res = await Runner.run(
+            starting_agent=self._agent,
+            input=[
+                EasyInputMessageParam(
+                    content=r.message,
+                    role=r.role,
+                    type="message",
+                )
+                for r in chat_session.history
+            ],
+        )
+
+        return res.final_output
+
+    def get_name(self) -> str:
+        return "openai"

@@ -1,7 +1,9 @@
 import json
 import logging
 from typing import Dict, List
+
 import redis
+
 from src.config.config import RedisConfig
 from src.repository.chat_session import ChatSession, ChatSessionStorage, Record
 
@@ -22,28 +24,25 @@ class RedisChatSessionStorage(ChatSessionStorage):
             history = self._get_full_message_history(key)
             return ChatSession(id=session_id, history=history)
 
-        initial_record = Record(
-            user_id="developer",
-            role="developer",
-            message="(this is the very beginging of the chat history)",
-        )
-        self._client.lpush(key, initial_record.to_json())
-
         if system_prompt:
-            system_prompt_record = Record(
-                user_id="developer",
-                role="system",
-                message=system_prompt,
-            )
-            self._client.lpush(key, system_prompt_record.to_json())
+            system_prompt_message = system_prompt
+        else:
+            system_prompt_message = "You’re a versatile helper, assisting me with a wide range of questions."
+
+        system_prompt_record = Record(
+            user_id="developer",
+            role="system",
+            message=system_prompt_message,
+        )
+        self._client.rpush(key, system_prompt_record.to_json())
 
         new_session = ChatSession(
             id=session_id,
-            history=[initial_record, system_prompt_record],
+            history=[system_prompt_record],
         )
         return new_session
 
-    def add_message(self, session_id: int, record: Record) -> None:
+    def add_message(self, session_id: int, record: Record) -> ChatSession:
         key = f"{self._key_prefix}{session_id}"
         if not self._client.exists(key):
             logging.error(
@@ -51,7 +50,7 @@ class RedisChatSessionStorage(ChatSessionStorage):
             )
             return
 
-        self._client.lpush(
+        self._client.rpush(
             key,
             Record(
                 user_id=record.user_id,
@@ -59,6 +58,11 @@ class RedisChatSessionStorage(ChatSessionStorage):
                 message=record.message,
             ).to_json(),
         )
+
+        sess = self.get_session(session_id)
+        logging.info("current sess")
+        logging.info(sess)
+        return sess
 
     def get_session(self, session_id: int) -> ChatSession | None:
         key = f"{self._key_prefix}{session_id}"
