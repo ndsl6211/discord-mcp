@@ -1,19 +1,23 @@
 discord:
   botToken: ""  # Your Discord bot token
   guilds: []    # List of Discord server IDs (guilds) where the bot will run
-openai:
-  apiKey: ""        # Your OpenAI API key
-  agentName: ""     # Name of the agent
-  model: ""         # Model to use
-  systemPrompt: ""  # System prompt for the agent
-  chatHistory:
-    storage: ""       # Storage method for chat history (e.g., redis, memory)
-    redisHost: ""     # Redis host (if using Redis for chat history)
-    redisPort: ""     # Redis port (if using Redis for chat history)
-    redisPassword: "" # Redis password (if using Redis for chat history)
-    redisDb: 0        # Redis database number (if using Redis for chat history)
-tracing:
-  langfuse:
-    secretKey: "" # Your Langfuse secret key
-    publicKey: "" # Your Langfuse public key
-    host: ""      # Langfuse host URL
+llm:
+  openai:
+    apiKey: ""        # Your OpenAI API key
+    model: ""         # Model to use
+    chatHistory:
+      storage: ""       # Storage method for chat history (e.g., redis, memory)
+      redisHost: ""     # Redis host (if using Redis for chat history)
+      redisPort: 6379   # Redis port (if using Redis for chat history)
+      redisPassword: "" # Redis password (if using Redis for chat history)
+      redisDb: 0        # Redis database number (if using Redis for chat history)
+    tracing:
+      langfuse:
+        secretKey: ""   # Your Langfuse secret key
+        publicKey: ""   # Your Langfuse public key
+        host: ""        # Langfuse host URL
+  gemini:
+    apiKey: ""          # Your Gemini API key
+    model: ""           # Model to use
+  agentName: ""         # Name of the agent
+  systemPrompt: ""      # System prompt for the agent

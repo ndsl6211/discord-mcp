@@ -1,10 +1,10 @@
 import logging
+from typing import Dict
 
 import discord
 
 from ..config import Config
 from ..llm.llm import LLMInteractor
-from ..repository.chat_session import ChatSessionStorage
 from .event_handler import DiscordEventHandler
 from .slash_command_handler import DiscordSlashCommandHandler
 
@@ -13,28 +13,24 @@ class DiscordBot:
     def __init__(
         self,
         token: str,
-        llm_agent: LLMInteractor,
+        llm_agents: Dict[str, LLMInteractor],
         config: Config,
-        chat_session_storage: ChatSessionStorage,
     ):
         self._token = token
         self._config = config
-        self._chat_session_storage = chat_session_storage
 
         self._initialize_bot()
 
         self._event_handler = DiscordEventHandler(
             bot=self._bot,
-            llm_agent=llm_agent,
+            llm_agents=llm_agents,
             config=config,
-            chat_session_storage=chat_session_storage,
         )
         self._event_handler.initialize()
         self._slash_command_handler = DiscordSlashCommandHandler(
             self._bot,
-            llm_agent=llm_agent,
+            llm_agents=llm_agents,
             config=config,
-            chat_session_storage=chat_session_storage,
         )
         self._slash_command_handler.initialize()
 
